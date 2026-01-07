@@ -24,7 +24,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 
-@ApiTags('Quiz Results')
+@ApiTags('Quiz Results (Admin Only)')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
