@@ -19,6 +19,11 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
+  @Get('published')
+  findAllPublished() {
+    return this.coursesService.findAllPublished();
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Post()

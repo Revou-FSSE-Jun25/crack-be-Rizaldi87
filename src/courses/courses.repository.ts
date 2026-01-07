@@ -25,4 +25,12 @@ export class CoursesRepository {
   async remove(id: number) {
     return await this.prisma.course.delete({ where: { id } });
   }
+
+  async findAllPublished() {
+    return await this.prisma.course.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+    });
+  }
 }

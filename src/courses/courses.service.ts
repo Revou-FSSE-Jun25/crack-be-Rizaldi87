@@ -10,6 +10,10 @@ export class CoursesService {
     return this.repo.create(createCourseDto);
   }
 
+  findAllPublished() {
+    return this.repo.findAllPublished();
+  }
+
   findAll() {
     return this.repo.findAll();
   }
