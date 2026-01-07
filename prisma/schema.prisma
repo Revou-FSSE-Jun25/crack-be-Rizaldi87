@@ -28,8 +28,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  progresses  Progress[]
+  progresses  LessonProgress[]
   quizResults QuizResult[]
+  enrollments Enrollment[]
+  quizAnswers QuizAnswer[]
+
 }
 
 enum COURSESTATUS {
@@ -47,6 +50,7 @@ model Course {
   updatedAt   DateTime      @updatedAt
 
   lessons Lesson[]
+  enrollments Enrollment[]
 }
 
 model Lesson {
@@ -58,7 +62,7 @@ model Lesson {
 
   course     Course     @relation(fields: [courseId], references: [id])
   quizzes    Quiz[]
-  progresses Progress[]
+  progresses LessonProgress[]
 }
 
 model Quiz {
@@ -69,6 +73,8 @@ model Quiz {
   lesson    Lesson       @relation(fields: [lessonId], references: [id])
   questions Question[]
   results   QuizResult[]
+  answers QuizAnswer[]
+
 }
 
 model Question {
@@ -78,6 +84,8 @@ model Question {
 
   quiz    Quiz     @relation(fields: [quizId], references: [id])
   choices Choice[]
+  answers QuizAnswer[]
+
 }
 
 model Choice {
@@ -87,18 +95,41 @@ model Choice {
   isCorrect  Boolean @default(false)
 
   question Question @relation(fields: [questionId], references: [id])
+  answers QuizAnswer[]
+
 }
 
-model Progress {
+enum ENROLLMENTSTATUS {
+  ONGOING
+  COMPLETED
+}
+
+model Enrollment {
+  id  Int @id @default(autoincrement())
+  userId Int
+  courseId Int
+  status ENROLLMENTSTATUS @default(ONGOING)
+  progress Float @default(0) // 0-100
+  enrolledAt DateTime @default(now())
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
   id          Int     @id @default(autoincrement())
-  studentId   Int
+  userId   Int
   lessonId    Int
   isCompleted Boolean @default(false)
+  completedAt DateTime?
 
-  student User   @relation(fields: [studentId], references: [id])
+  student User   @relation(fields: [userId], references: [id])
   lesson  Lesson @relation(fields: [lessonId], references: [id])
 
-  @@unique([studentId, lessonId])
+  @@unique([userId, lessonId])
 }
 
 model QuizResult {
@@ -112,4 +143,21 @@ model QuizResult {
   quiz    Quiz @relation(fields: [quizId], references: [id])
 
   @@unique([studentId, quizId])
+}
+
+model QuizAnswer {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  quizId     Int
+  questionId Int
+  choiceId   Int
+  isCorrect  Boolean
+  answeredAt DateTime @default(now())
+
+  student  User     @relation(fields: [studentId], references: [id])
+  quiz     Quiz     @relation(fields: [quizId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+  choice   Choice   @relation(fields: [choiceId], references: [id])
+
+  @@unique([studentId, quizId, questionId])
 }
