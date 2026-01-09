@@ -24,6 +24,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 @ApiTags('Users')
 @ApiBearerAuth() // 🔐 JWT
@@ -79,5 +80,14 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden (not ADMIN)' })
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Get('/count/:role')
+  @ApiOperation({ summary: 'Count users by role (ADMIN only)' })
+  @ApiOkResponse({ description: 'Count of users' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden (not ADMIN)' })
+  count(@Param('role') role: Role) {
+    return this.usersService.countByRole(role);
   }
 }

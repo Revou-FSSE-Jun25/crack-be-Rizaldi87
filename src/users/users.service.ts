@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -25,5 +26,9 @@ export class UsersService {
 
   remove(id: number) {
     return this.repo.delete(id);
+  }
+
+  countByRole(role: Role) {
+    return this.repo.countByRole(role);
   }
 }

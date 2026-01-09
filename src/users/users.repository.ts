@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Role } from '@prisma/client';
 @Injectable()
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -44,5 +45,10 @@ export class UsersRepository {
 
   async delete(id: number) {
     return await this.prisma.user.delete({ where: { id } });
+  }
+  async countByRole(role: Role) {
+    return await this.prisma.user.count({
+      where: { role },
+    });
   }
 }
