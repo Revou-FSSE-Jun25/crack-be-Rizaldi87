@@ -32,4 +32,8 @@ export class LessonsRepository {
       where: { courseId: Number(courseId) },
     });
   }
+
+  async countAllLessons() {
+    return await this.prisma.lesson.count();
+  }
 }

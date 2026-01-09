@@ -25,4 +25,8 @@ export class QuizService {
   remove(id: number) {
     return this.repo.remove(id);
   }
+
+  countQuizzes() {
+    return this.repo.countQuizzes();
+  }
 }

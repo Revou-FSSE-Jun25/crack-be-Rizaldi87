@@ -44,10 +44,19 @@ export class LessonsController {
   }
 
   @Get()
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Get all lessons' })
   @ApiOkResponse({ description: 'List of lessons' })
   findAll() {
     return this.lessonsService.findAll();
+  }
+
+  @Get('count')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Get total number of lessons' })
+  @ApiOkResponse({ description: 'Total number of lessons' })
+  countAllLessons() {
+    return this.lessonsService.countAllLessons();
   }
 
   @Get(':id')

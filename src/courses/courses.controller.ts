@@ -63,6 +63,16 @@ export class CoursesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @ApiBearerAuth()
+  @Get('count')
+  @ApiOperation({ summary: 'Get total number of courses' })
+  @ApiResponse({ status: 200, description: 'Total number of courses' })
+  countAllCourses() {
+    return this.coursesService.countAllCourses();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Get course detail by ID (ADMIN only)' })
   @ApiParam({ name: 'id', type: Number })

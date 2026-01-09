@@ -24,4 +24,8 @@ export class QuizRepository {
   async remove(id: number) {
     return this.prisma.quiz.delete({ where: { id } });
   }
+
+  async countQuizzes() {
+    return this.prisma.quiz.count();
+  }
 }

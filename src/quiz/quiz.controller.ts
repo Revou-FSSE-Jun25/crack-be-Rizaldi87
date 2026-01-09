@@ -50,6 +50,14 @@ export class QuizController {
     return this.quizService.findAll();
   }
 
+  @Get('count')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Get total number of quizzes' })
+  @ApiOkResponse({ description: 'Total number of quizzes' })
+  countQuizzes() {
+    return this.quizService.countQuizzes();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get quiz by ID' })
   @ApiOkResponse({ description: 'Quiz detail' })

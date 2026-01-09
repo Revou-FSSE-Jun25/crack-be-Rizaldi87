@@ -29,4 +29,8 @@ export class LessonsService {
   findAllbyCourseId(courseId: number) {
     return this.repo.findAllbyCourseId(courseId);
   }
+
+  countAllLessons() {
+    return this.repo.countAllLessons();
+  }
 }

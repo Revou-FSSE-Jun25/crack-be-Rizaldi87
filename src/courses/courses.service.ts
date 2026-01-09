@@ -41,4 +41,8 @@ export class CoursesService {
   unEnroll(userId: number, courseId: number) {
     return this.enrollmentsService.unEnroll(userId, courseId);
   }
+
+  countAllCourses() {
+    return this.repo.countAllCourses();
+  }
 }

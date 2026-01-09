@@ -33,4 +33,8 @@ export class CoursesRepository {
       },
     });
   }
+
+  async countAllCourses() {
+    return await this.prisma.course.count();
+  }
 }
