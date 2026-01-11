@@ -72,7 +72,7 @@ model Quiz {
   title    String
 
   lesson    Lesson       @relation(fields: [lessonId], references: [id])
-  questions Question[]
+  questions Question[] 
   results   QuizResult[]
   answers QuizAnswer[]
 
@@ -83,9 +83,9 @@ model Question {
   quizId       Int
   questionText String
 
-  quiz    Quiz     @relation(fields: [quizId], references: [id])
-  choices Choice[]
-  answers QuizAnswer[]
+  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  choices Choice[] 
+  answers QuizAnswer[] 
 
 }
 
@@ -95,8 +95,8 @@ model Choice {
   text       String
   isCorrect  Boolean @default(false)
 
-  question Question @relation(fields: [questionId], references: [id])
-  answers QuizAnswer[]
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[] 
 
 }
 
@@ -140,8 +140,8 @@ model QuizResult {
   score       Int
   submittedAt DateTime @default(now())
 
-  student User @relation(fields: [studentId], references: [id])
-  quiz    Quiz @relation(fields: [quizId], references: [id])
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quiz    Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, quizId])
 }
@@ -155,10 +155,10 @@ model QuizAnswer {
   isCorrect  Boolean
   answeredAt DateTime @default(now())
 
-  student  User     @relation(fields: [studentId], references: [id])
-  quiz     Quiz     @relation(fields: [quizId], references: [id])
-  question Question @relation(fields: [questionId], references: [id])
-  choice   Choice   @relation(fields: [choiceId], references: [id])
+  student  User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quiz     Quiz     @relation(fields: [quizId], references: [id],  onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id],  onDelete: Cascade)
+  choice   Choice   @relation(fields: [choiceId], references: [id],  onDelete: Cascade)
 
   @@unique([studentId, quizId, questionId])
 }
