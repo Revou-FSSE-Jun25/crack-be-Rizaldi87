@@ -19,12 +19,27 @@ export class QuestionsRepository {
     return this.prisma.question.delete({ where: { id } });
   }
 
-  create(dto: CreateQuestionDto) {
-    return this.prisma.question.create({ data: dto });
+  async create(dto: CreateQuestionDto) {
+    return this.prisma.question.create({
+      data: {
+        questionText: dto.questionText,
+        quiz: {
+          connect: { id: dto.quizId },
+        },
+        choices: {
+          create: dto.choices,
+        },
+      },
+    });
   }
 
   update(id: number, dto: UpdateQuestionDto) {
-    return this.prisma.question.update({ where: { id }, data: dto });
+    return this.prisma.question.update({
+      where: { id },
+      data: {
+        questionText: dto.questionText,
+      },
+    });
   }
 
   findAllByQuizId(quizId: number) {

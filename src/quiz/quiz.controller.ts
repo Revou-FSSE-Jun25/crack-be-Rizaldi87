@@ -25,6 +25,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import { CreateQuizWithQuestionDto } from './dto/create-quizwithquiestions';
 
 @ApiTags('Quiz')
 @ApiBearerAuth() // 🔐 JWT
@@ -33,7 +34,7 @@ import {
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
-  @Roles('admin')
+  @Roles('ADMIN')
   @Post()
   @ApiOperation({ summary: 'Create new quiz (ADMIN only)' })
   @ApiCreatedResponse({ description: 'Quiz successfully created' })
@@ -66,7 +67,7 @@ export class QuizController {
     return this.quizService.findOne(id);
   }
 
-  @Roles('admin')
+  @Roles('ADMIN')
   @Patch(':id')
   @ApiOperation({ summary: 'Update quiz by ID (ADMIN only)' })
   @ApiOkResponse({ description: 'Quiz successfully updated' })
@@ -79,7 +80,7 @@ export class QuizController {
     return this.quizService.update(id, updateQuizDto);
   }
 
-  @Roles('admin')
+  @Roles('ADMIN')
   @Delete(':id')
   @ApiOperation({ summary: 'Delete quiz by ID (ADMIN only)' })
   @ApiOkResponse({ description: 'Quiz successfully deleted' })
@@ -87,5 +88,28 @@ export class QuizController {
   @ApiNotFoundResponse({ description: 'Quiz not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.quizService.remove(id);
+  }
+
+  @Roles('ADMIN')
+  @Post('/with-questions')
+  @ApiOperation({ summary: 'Create new quiz with questions (ADMIN only)' })
+  @ApiCreatedResponse({ description: 'Quiz successfully created' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden (not ADMIN)' })
+  createWithQuestions(@Body() createQuizDto: CreateQuizWithQuestionDto) {
+    return this.quizService.createWithQuestions(createQuizDto);
+  }
+
+  @Roles('ADMIN')
+  @Patch('/with-questions/:id')
+  @ApiOperation({ summary: 'Update quiz with questions by ID (ADMIN only)' })
+  @ApiOkResponse({ description: 'Quiz successfully updated' })
+  @ApiForbiddenResponse({ description: 'Forbidden (not ADMIN)' })
+  @ApiNotFoundResponse({ description: 'Quiz not found' })
+  updateQuizWithQuestion(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: any,
+  ) {
+    return this.quizService.updateQuizWithQuestion(id, dto);
   }
 }

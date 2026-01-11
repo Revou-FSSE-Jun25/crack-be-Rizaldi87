@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateQuestionDto } from './create-question.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateQuestionDto extends PartialType(CreateQuestionDto) {}
+export class UpdateQuestionDto {
+  @ApiPropertyOptional({ example: 'What is Prisma?' })
+  @IsOptional()
+  @IsString()
+  questionText?: string;
+}

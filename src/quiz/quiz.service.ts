@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { QuizRepository } from './quiz.repository';
+import { CreateQuizWithQuestionDto } from './dto/create-quizwithquiestions';
 
 @Injectable()
 export class QuizService {
@@ -28,5 +29,13 @@ export class QuizService {
 
   countQuizzes() {
     return this.repo.countQuizzes();
+  }
+
+  createWithQuestions(createQuizDto: CreateQuizWithQuestionDto) {
+    return this.repo.createWithQuestions(createQuizDto);
+  }
+
+  updateQuizWithQuestion(quizId: number, dto: any) {
+    return this.repo.updateQuizWithQuestion(quizId, dto);
   }
 }

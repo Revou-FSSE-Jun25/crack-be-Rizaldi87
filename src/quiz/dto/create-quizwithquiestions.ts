@@ -7,9 +7,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { CreateQuestionNestedDto } from 'src/questions/dto/create-question-nested';
 import { CreateQuestionDto } from 'src/questions/dto/create-question.dto';
 
-export class CreateQuizDto {
+export class CreateQuizWithQuestionDto {
   @ApiProperty({ example: 1, description: 'Lesson ID' })
   @IsNotEmpty()
   @IsNumber()
@@ -19,4 +20,10 @@ export class CreateQuizDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+
+  @ApiProperty({ type: [CreateQuestionNestedDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateQuestionNestedDto)
+  questions: CreateQuestionNestedDto[];
 }
