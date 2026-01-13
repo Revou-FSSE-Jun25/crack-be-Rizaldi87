@@ -15,7 +15,20 @@ import { QuizresultsModule } from './quizresults/quizresults.module';
 import { QuizanswersModule } from './quizanswers/quizanswers.module';
 
 @Module({
-  imports: [PrismaModule, CoursesModule, AuthModule, UsersModule, LessonsModule, QuizModule, QuestionsModule, ChoicesModule, EnrollmentsModule, LessonprogressModule, QuizresultsModule, QuizanswersModule],
+  imports: [
+    PrismaModule,
+    CoursesModule,
+    AuthModule,
+    UsersModule,
+    LessonsModule,
+    QuizModule,
+    QuestionsModule,
+    ChoicesModule,
+    EnrollmentsModule,
+    LessonprogressModule,
+    QuizresultsModule,
+    QuizanswersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
