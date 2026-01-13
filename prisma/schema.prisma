@@ -33,7 +33,6 @@ model User {
   quizResults QuizResult[]
   enrollments Enrollment[]
   quizAnswers QuizAnswer[]
-
 }
 
 enum COURSESTATUS {
@@ -50,7 +49,7 @@ model Course {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  lessons Lesson[]
+  lessons     Lesson[]
   enrollments Enrollment[]
 }
 
@@ -61,9 +60,11 @@ model Lesson {
   content  String // html / video url
   order    Int
 
-  course     Course     @relation(fields: [courseId], references: [id])
+  course     Course           @relation(fields: [courseId], references: [id])
   quizzes    Quiz[]
   progresses LessonProgress[]
+
+  @@unique([courseId, order])
 }
 
 model Quiz {
@@ -72,10 +73,9 @@ model Quiz {
   title    String
 
   lesson    Lesson       @relation(fields: [lessonId], references: [id])
-  questions Question[] 
+  questions Question[]
   results   QuizResult[]
-  answers QuizAnswer[]
-
+  answers   QuizAnswer[]
 }
 
 model Question {
@@ -83,10 +83,9 @@ model Question {
   quizId       Int
   questionText String
 
-  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  choices Choice[] 
-  answers QuizAnswer[] 
-
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  choices Choice[]
+  answers QuizAnswer[]
 }
 
 model Choice {
@@ -95,9 +94,8 @@ model Choice {
   text       String
   isCorrect  Boolean @default(false)
 
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  answers QuizAnswer[] 
-
+  question Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  QuizAnswer[]
 }
 
 enum ENROLLMENTSTATUS {
@@ -106,25 +104,25 @@ enum ENROLLMENTSTATUS {
 }
 
 model Enrollment {
-  id  Int @id @default(autoincrement())
-  userId Int
-  courseId Int
-  status ENROLLMENTSTATUS @default(ONGOING)
-  progress Float @default(0) // 0-100
-  enrolledAt DateTime @default(now())
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  courseId    Int
+  status      ENROLLMENTSTATUS @default(ONGOING)
+  progress    Float            @default(0) // 0-100
+  enrolledAt  DateTime         @default(now())
   completedAt DateTime?
 
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
 
   @@unique([userId, courseId])
 }
 
 model LessonProgress {
-  id          Int     @id @default(autoincrement())
-  userId   Int
+  id          Int       @id @default(autoincrement())
+  userId      Int
   lessonId    Int
-  isCompleted Boolean @default(false)
+  isCompleted Boolean   @default(false)
   completedAt DateTime?
 
   student User   @relation(fields: [userId], references: [id])
@@ -156,9 +154,9 @@ model QuizAnswer {
   answeredAt DateTime @default(now())
 
   student  User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  quiz     Quiz     @relation(fields: [quizId], references: [id],  onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id],  onDelete: Cascade)
-  choice   Choice   @relation(fields: [choiceId], references: [id],  onDelete: Cascade)
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  choice   Choice   @relation(fields: [choiceId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, quizId, questionId])
 }
@@ -170,4 +168,3 @@ model RefreshToken {
   revoked   Boolean  @default(false)
   expiresAt DateTime
 }
-
