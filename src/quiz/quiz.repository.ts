@@ -172,4 +172,145 @@ export class QuizRepository {
       },
     });
   }
+
+  findQuizWithQuestions(quizId: number) {
+    return this.prisma.quiz.findUnique({
+      where: { id: quizId },
+      include: {
+        lesson: true,
+        questions: {
+          include: {
+            choices: true,
+          },
+        },
+      },
+    });
+  }
+
+  async submitQuizTransaction(data: {
+    userId: number;
+    quizId: number;
+    lessonId: number;
+    courseId: number;
+    totalQuestions: number;
+    score: number;
+    answers: {
+      questionId: number;
+      choiceId: number;
+      isCorrect: boolean;
+    }[];
+  }) {
+    const {
+      userId,
+      quizId,
+      lessonId,
+      courseId,
+      totalQuestions,
+      score,
+      answers,
+    } = data;
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1️⃣ Simpan / update QuizAnswer
+      for (const a of answers) {
+        await tx.quizAnswer.upsert({
+          where: {
+            studentId_quizId_questionId: {
+              studentId: userId,
+              quizId,
+              questionId: a.questionId,
+            },
+          },
+          update: {
+            choiceId: a.choiceId,
+            isCorrect: a.isCorrect,
+          },
+          create: {
+            studentId: userId,
+            quizId,
+            questionId: a.questionId,
+            choiceId: a.choiceId,
+            isCorrect: a.isCorrect,
+          },
+        });
+      }
+
+      // 2️⃣ Simpan QuizResult nanti di cek dipakai atau tidak
+      const result = await tx.quizResult.upsert({
+        where: {
+          studentId_quizId: {
+            studentId: userId,
+            quizId,
+          },
+        },
+        update: {
+          score,
+        },
+        create: {
+          studentId: userId,
+          quizId,
+          score,
+        },
+      });
+
+      // 3️⃣ Mark LessonProgress completed
+      await tx.lessonProgress.upsert({
+        where: {
+          userId_lessonId: {
+            userId,
+            lessonId,
+          },
+        },
+        update: {
+          isCompleted: true,
+          completedAt: new Date(),
+        },
+        create: {
+          userId,
+          lessonId,
+          isCompleted: true,
+          completedAt: new Date(),
+        },
+      });
+
+      // 4️⃣ Hitung ulang progress course
+      const totalLessons = await tx.lesson.count({
+        where: { courseId },
+      });
+
+      const completedLessons = await tx.lessonProgress.count({
+        where: {
+          userId,
+          isCompleted: true,
+          lesson: { courseId },
+        },
+      });
+
+      const progress =
+        totalLessons === 0
+          ? 0
+          : Number(((completedLessons / totalLessons) * 100).toFixed(2));
+
+      const enrollment = await tx.enrollment.update({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId,
+          },
+        },
+        data: {
+          progress,
+          status: progress === 100 ? 'COMPLETED' : 'ONGOING',
+          completedAt: progress === 100 ? new Date() : null,
+        },
+      });
+
+      return {
+        score,
+        totalQuestions,
+        progress,
+        enrollmentStatus: enrollment.status,
+      };
+    });
+  }
 }

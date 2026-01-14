@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizDto } from './dto/create-quiz.dto';
@@ -26,6 +27,7 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { CreateQuizWithQuestionDto } from './dto/create-quizwithquiestions';
+import { SubmitQuizDto } from './dto/submit-quiz.dto';
 
 @ApiTags('Quiz')
 @ApiBearerAuth() // 🔐 JWT
@@ -119,5 +121,20 @@ export class QuizController {
   @ApiOkResponse({ description: 'List of quizzes' })
   findAllByCourseId(@Param('courseId', ParseIntPipe) courseId: number) {
     return this.quizService.findAllByCourseId(courseId);
+  }
+
+  @Roles('STUDENT')
+  @Post(':quizId/submit')
+  @ApiOperation({ summary: 'Submit quiz (STUDENT only)' })
+  @ApiOkResponse({ description: 'Quiz successfully submitted' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden (not STUDENT)' })
+  @ApiNotFoundResponse({ description: 'Quiz not found' })
+  async submitQuiz(
+    @Param('quizId', ParseIntPipe) quizId: number,
+    @Body() dto: SubmitQuizDto,
+    @Req() req,
+  ) {
+    return this.quizService.submitQuiz(req.user.userId, quizId, dto.answers);
   }
 }
