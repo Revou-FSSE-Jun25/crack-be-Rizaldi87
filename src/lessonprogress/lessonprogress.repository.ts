@@ -30,4 +30,37 @@ export class LessonProgressRepository {
       where: { userId_lessonId: { userId, lessonId } },
     });
   }
+
+  upsertLessonProgress(userId: number, lessonId: number) {
+    return this.prisma.lessonProgress.upsert({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId,
+        },
+      },
+      update: {
+        isCompleted: true,
+        completedAt: new Date(),
+      },
+      create: {
+        userId,
+        lessonId,
+        isCompleted: true,
+        completedAt: new Date(),
+      },
+    });
+  }
+
+  countCompletedByUserAndCourse(userId: number, courseId: number) {
+    return this.prisma.lessonProgress.count({
+      where: {
+        userId,
+        isCompleted: true,
+        lesson: {
+          courseId,
+        },
+      },
+    });
+  }
 }

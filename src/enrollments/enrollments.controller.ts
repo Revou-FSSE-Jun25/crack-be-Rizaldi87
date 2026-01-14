@@ -124,4 +124,32 @@ export class EnrollmentsController {
   findByUserId(@Param('userId', ParseIntPipe) userId: number) {
     return this.enrollmentsService.findByUserId(userId);
   }
+
+  @Roles('STUDENT')
+  @Post('lessons/:lessonId/complete')
+  @ApiOperation({ summary: 'Complete lesson and update enrollment progress' })
+  @ApiParam({ name: 'lessonId', type: Number })
+  completeLesson(
+    @Req() req,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
+  ) {
+    return this.enrollmentsService.completeLesson(req.user.userId, lessonId);
+  }
+
+  @Roles('STUDENT')
+  @Get('course/:courseId/check')
+  checkEnrollment(
+    @Req() req,
+    @Param('courseId', ParseIntPipe) courseId: number,
+  ) {
+    return this.enrollmentsService.checkEnrollment(req.user.userId, courseId);
+  }
+
+  @Roles('STUDENT')
+  @Post('course/:courseId/enroll')
+  @ApiOperation({ summary: 'Enroll in a course' })
+  @ApiParam({ name: 'courseId', type: Number })
+  enroll(@Req() req, @Param('courseId', ParseIntPipe) courseId: number) {
+    return this.enrollmentsService.enroll(req.user.userId, courseId);
+  }
 }

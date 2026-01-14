@@ -85,4 +85,19 @@ export class EnrollmentsRepository {
       },
     });
   }
+  updateEnrollProgress(
+    id: number,
+    progress: number,
+    completedLessons: number,
+    totalLessons: number,
+  ) {
+    return this.prisma.enrollment.update({
+      where: { id },
+      data: {
+        progress,
+        status: completedLessons === totalLessons ? 'COMPLETED' : 'ONGOING',
+        completedAt: completedLessons === totalLessons ? new Date() : null,
+      },
+    });
+  }
 }

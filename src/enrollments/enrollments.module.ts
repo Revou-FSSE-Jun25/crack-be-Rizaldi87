@@ -7,6 +7,8 @@ import { UsersModule } from 'src/users/users.module';
 import { CoursesModule } from 'src/courses/courses.module';
 import { UsersRepository } from 'src/users/users.repository';
 import { CoursesRepository } from 'src/courses/courses.repository';
+import { LessonsRepository } from 'src/lessons/lessons.repository';
+import { LessonProgressRepository } from 'src/lessonprogress/lessonprogress.repository';
 
 @Module({
   imports: [PrismaModule, UsersModule, forwardRef(() => CoursesModule)],
@@ -16,6 +18,8 @@ import { CoursesRepository } from 'src/courses/courses.repository';
     EnrollmentsRepository,
     UsersRepository,
     CoursesRepository,
+    LessonsRepository,
+    LessonProgressRepository,
   ],
   exports: [EnrollmentsService],
 })

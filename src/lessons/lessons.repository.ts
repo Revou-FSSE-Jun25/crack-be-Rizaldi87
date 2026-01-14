@@ -63,4 +63,7 @@ export class LessonsRepository {
       }
     });
   }
+  countLessonsByCourseId(courseId: number) {
+    return this.prisma.lesson.count({ where: { courseId } });
+  }
 }

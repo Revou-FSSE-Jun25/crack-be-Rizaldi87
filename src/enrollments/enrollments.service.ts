@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +9,8 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { EnrollmentsRepository } from './enrollments.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { CoursesRepository } from 'src/courses/courses.repository';
+import { LessonsRepository } from 'src/lessons/lessons.repository';
+import { LessonProgressRepository } from 'src/lessonprogress/lessonprogress.repository';
 
 @Injectable()
 export class EnrollmentsService {
@@ -15,6 +18,8 @@ export class EnrollmentsService {
     private readonly repo: EnrollmentsRepository,
     private readonly usersRepo: UsersRepository,
     private readonly coursesRepo: CoursesRepository,
+    private readonly lessonRepo: LessonsRepository,
+    private readonly lessonProgressRepo: LessonProgressRepository,
   ) {}
   create(createEnrollmentDto: CreateEnrollmentDto) {
     //admin only
@@ -100,5 +105,51 @@ export class EnrollmentsService {
     }
 
     return this.repo.remove(enrollment.id);
+  }
+
+  async completeLesson(userId: number, lessonId: number) {
+    const lesson = await this.lessonRepo.findOne(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
+
+    const enrollment = await this.repo.findByUserIdAndCourseId(
+      userId,
+      lesson.courseId,
+    );
+
+    if (!enrollment) {
+      throw new ForbiddenException('User is not enrolled in the course');
+    }
+
+    await this.lessonProgressRepo.upsertLessonProgress(userId, lessonId);
+
+    const totalLessons = await this.lessonRepo.countLessonsByCourseId(
+      lesson.courseId,
+    );
+
+    const completedLessons =
+      await this.lessonProgressRepo.countCompletedByUserAndCourse(
+        userId,
+        lesson.courseId,
+      );
+
+    const progress = Number(
+      ((completedLessons / totalLessons) * 100).toFixed(2),
+    );
+
+    return this.repo.updateEnrollProgress(
+      enrollment.id,
+      progress,
+      completedLessons,
+      totalLessons,
+    );
+  }
+
+  async checkEnrollment(userId: number, courseId: number) {
+    const res = await this.repo.findByUserIdAndCourseId(userId, courseId);
+
+    return !!res;
   }
 }
