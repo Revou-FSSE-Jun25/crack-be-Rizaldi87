@@ -13,6 +13,8 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { LessonprogressModule } from './lessonprogress/lessonprogress.module';
 import { QuizresultsModule } from './quizresults/quizresults.module';
 import { QuizanswersModule } from './quizanswers/quizanswers.module';
+import { AssignmentsModule } from './assignments/assignments.module';
+import { AssignmentsubmissionsModule } from './assignmentsubmissions/assignmentsubmissions.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { QuizanswersModule } from './quizanswers/quizanswers.module';
     LessonprogressModule,
     QuizresultsModule,
     QuizanswersModule,
+    AssignmentsModule,
+    AssignmentsubmissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

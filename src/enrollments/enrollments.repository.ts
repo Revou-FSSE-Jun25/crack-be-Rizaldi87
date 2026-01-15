@@ -10,7 +10,30 @@ export class EnrollmentsRepository {
   }
 
   findAll() {
-    return this.prisma.enrollment.findMany();
+    return this.prisma.enrollment.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        course: {
+          select: {
+            id: true,
+            title: true,
+            image: true,
+            description: true,
+            _count: {
+              select: {
+                lessons: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   findOne(id: number) {
@@ -55,6 +78,15 @@ export class EnrollmentsRepository {
                         choices: true,
                       },
                     },
+                  },
+                },
+                assignments: {
+                  select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    dueAt: true,
+                    maxAttempts: true,
                   },
                 },
               },

@@ -29,10 +29,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  progresses  LessonProgress[]
-  quizResults QuizResult[]
-  enrollments Enrollment[]
-  quizAnswers QuizAnswer[]
+  progresses            LessonProgress[]
+  quizResults           QuizResult[]
+  enrollments           Enrollment[]
+  quizAnswers           QuizAnswer[]
+  assignmentSubmissions AssignmentSubmission[]
 }
 
 enum COURSESTATUS {
@@ -60,9 +61,10 @@ model Lesson {
   content  String // html / video url
   order    Int
 
-  course     Course           @relation(fields: [courseId], references: [id])
-  quizzes    Quiz[]
-  progresses LessonProgress[]
+  course      Course           @relation(fields: [courseId], references: [id])
+  quizzes     Quiz[]
+  progresses  LessonProgress[]
+  assignments Assignment[]
 
   @@unique([courseId, order])
 }
@@ -167,4 +169,34 @@ model RefreshToken {
   userId    Int
   revoked   Boolean  @default(false)
   expiresAt DateTime
+}
+
+model Assignment {
+  id          Int       @id @default(autoincrement())
+  lessonId    Int
+  title       String
+  description String?
+  dueAt       DateTime?
+  maxAttempts Int? // null = unlimited
+  createdAt   DateTime  @default(now())
+
+  lesson      Lesson                 @relation(fields: [lessonId], references: [id])
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           Int      @id @default(autoincrement())
+  assignmentId Int
+  studentId    Int
+  content      String? // text / markdown
+  fileUrl      String?
+  attempt      Int
+  submittedAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    User       @relation(fields: [studentId], references: [id])
+
+
+  @@unique([assignmentId, studentId, attempt])
 }
