@@ -15,7 +15,15 @@ import {
 import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiBadGatewayResponse,
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -29,24 +37,46 @@ export class AssignmentsController {
   constructor(private readonly assignmentsService: AssignmentsService) {}
 
   @Roles('ADMIN')
+  @ApiOperation({ summary: 'Create assignment' })
+  @ApiAcceptedResponse({ description: 'Assignment created' })
+  @ApiCreatedResponse({ description: 'Assignment created' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Post()
   create(@Body() createAssignmentDto: CreateAssignmentDto) {
     return this.assignmentsService.create(createAssignmentDto);
   }
 
   @Roles('ADMIN')
+  @ApiOperation({ summary: 'Get all assignments' })
+  @ApiCreatedResponse({ description: 'Assignments found' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Get()
   findAll() {
     return this.assignmentsService.findAll();
   }
 
   @Roles('ADMIN')
+  @ApiOperation({ summary: 'Get assignment by id' })
+  @ApiAcceptedResponse({ description: 'Assignment found' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.assignmentsService.findOne(+id);
   }
 
   @Roles('ADMIN')
+  @ApiOperation({ summary: 'Update assignment by id' })
+  @ApiAcceptedResponse({ description: 'Assignment updated' })
+  @ApiCreatedResponse({ description: 'Assignment updated' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -56,12 +86,23 @@ export class AssignmentsController {
   }
 
   @Roles('ADMIN')
+  @ApiOperation({ summary: 'Delete assignment by id' })
+  @ApiAcceptedResponse({ description: 'Assignment deleted' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.assignmentsService.remove(+id);
   }
 
   @Roles('STUDENT')
+  @ApiOperation({ summary: 'Submit assignment' })
+  @ApiAcceptedResponse({ description: 'Assignment submitted' })
+  @ApiCreatedResponse({ description: 'Assignment submitted' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadGatewayResponse({ description: 'Bad gateway' })
   @Post(':id/submit')
   @UseInterceptors(FileInterceptor('file'))
   submitAssignment(
