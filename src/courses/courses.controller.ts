@@ -152,7 +152,6 @@ export class CoursesController {
     @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(file);
     return this.coursesService.updateImage(id, file.filename);
   }
 

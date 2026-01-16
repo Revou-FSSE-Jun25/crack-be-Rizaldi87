@@ -56,6 +56,12 @@ export class AssignmentsService {
       throw new BadRequestException('Max attempts reached');
     }
 
+    const lastScore = assignment.submissions[0]?.score ?? 0;
+
+    if (lastScore > 0) {
+      throw new BadRequestException('Assignment already graded');
+    }
+
     return this.submissionsRepo.create({
       assignmentId, // ✅ KIRIM ID, BUKAN OBJECT
       studentId,
