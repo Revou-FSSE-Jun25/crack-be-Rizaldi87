@@ -63,7 +63,7 @@ model Lesson {
   content  String // html / video url
   order    Int
 
-  course      Course           @relation(fields: [courseId], references: [id])
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   quizzes     Quiz[]
   progresses  LessonProgress[]
   assignments Assignment[]
@@ -76,7 +76,7 @@ model Quiz {
   lessonId Int
   title    String
 
-  lesson    Lesson       @relation(fields: [lessonId], references: [id])
+  lesson    Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   questions Question[]
   results   QuizResult[]
   answers   QuizAnswer[]
@@ -116,8 +116,8 @@ model Enrollment {
   enrolledAt  DateTime         @default(now())
   completedAt DateTime?
 
-  user   User   @relation(fields: [userId], references: [id])
-  course Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
 }
@@ -129,8 +129,8 @@ model LessonProgress {
   isCompleted Boolean   @default(false)
   completedAt DateTime?
 
-  student User   @relation(fields: [userId], references: [id])
-  lesson  Lesson @relation(fields: [lessonId], references: [id])
+  student User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
 }
@@ -182,7 +182,7 @@ model Assignment {
   maxAttempts Int? // null = unlimited
   createdAt   DateTime  @default(now())
 
-  lesson      Lesson                 @relation(fields: [lessonId], references: [id])
+  lesson      Lesson                 @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   submissions AssignmentSubmission[]
 }
 
@@ -197,8 +197,8 @@ model AssignmentSubmission {
   submittedAt  DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  assignment Assignment @relation(fields: [assignmentId], references: [id])
-  student    User       @relation(fields: [studentId], references: [id])
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
 
   @@unique([assignmentId, studentId, attempt])
