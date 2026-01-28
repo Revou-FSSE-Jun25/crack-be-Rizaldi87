@@ -54,7 +54,7 @@ export class AssignmentsubmissionsController {
   }
 
   @Roles('STUDENT')
-  @ApiOperation({ summary: 'Get submissions by student id' })
+  @ApiOperation({ summary: 'Get submission by student id' })
   @ApiOkResponse({ description: 'Submission found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiBadRequestResponse({ description: 'Bad request' })
